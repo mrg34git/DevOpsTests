@@ -1,5 +1,15 @@
-- hosts: localhost
+- hosts: k8smaster
   tasks:
+
+  - name: check user
+    remote_user: mrg3admin
+    shell: kubectl get nodes;docker image ls
+    register: out
+
+   - debug: var=out.stdout_lines
+
+   - debug: var=out.stdout
+
   - name: Deploy the service
     k8s:
       state: present
