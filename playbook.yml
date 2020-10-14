@@ -1,5 +1,6 @@
 - hosts: k8smaster
   gather_facts: false
+  remote_user: mrg3admin
   tasks:
     - block:
       - name: kubectl commands
