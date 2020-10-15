@@ -1,25 +1,38 @@
----
 - hosts: k8smaster
   gather_facts: false
   remote_user: mrg3admin
-  tasks:  
+  tasks:
     - block:
       - name: kubectl commands
         #remote_user: mrg3admin
         shell: kubectl get nodes;docker image ls
         register: out
-      - debug: 
+
+      - debug:
           var: out
 
-      - debug: 
+      - debug:
           var: out.stdout_lines
 
       - name: system command
         shell: hostname
         register: foo
-      - debug: 
+
+      - debug:
           var: foo
+
+      - name: Deploy the service
+        k8s:
+          state: present
+          definition: "{{ lookup('template', 'service.yml') | from_yaml }}"
+          validate_certs: no
+          namespace: default
+
+      - name: Deploy the application
+        k8s:
+          state: present
+          validate_certs: no
+          namespace: default
+          definition: "{{ lookup('template', 'deployment.yml') | from_yaml }}"
       become: yes
-      become_user: mrg3admin 
-
-
+      become_user: mrg3admin
